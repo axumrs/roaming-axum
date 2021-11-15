@@ -3,6 +3,7 @@ use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::Html;
 use axum::routing::get;
 use axum::{Json, Router};
+use serde::Serialize;
 
 /// 纯文本之 &str
 async fn str_response() -> &'static str {
@@ -59,6 +60,23 @@ async fn result() -> Result<&'static str, StatusCode> {
     }
 }
 
+#[derive(Serialize)]
+struct Info {
+    web_site: String,
+    email: String,
+    level: i32,
+}
+
+/// 自定义结构体响应
+async fn info_struct() -> Json<Info> {
+    let info = Info {
+        web_site: "https://axum.rs".to_string(),
+        email: "team@axum.rs".to_string(),
+        level: 123,
+    };
+    Json(info)
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -69,7 +87,8 @@ async fn main() {
         .route("/with_headers_and_status", get(with_headers_and_status))
         .route("/html", get(html))
         .route("/json", get(json))
-        .route("/result", get(result));
+        .route("/result", get(result))
+        .route("/info_struct", get(info_struct));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
