@@ -42,13 +42,22 @@ async fn subject(Query(args): Query<SubjectArgs>) -> String {
     format!("Page {}, keyword: {} of subjects", args.page, args.keyword)
 }
 
+async fn subject_opt(args: Option<Query<SubjectArgs>>) -> String {
+    if let Some(args) = args {
+        let args = args.0;
+        return format!("Page {}, keyword: {} of subjects", args.page, args.keyword);
+    }
+    "Page 0, no keyword of subjects".to_string()
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
         .route("/user/:id", get(user_info))
         .route("/repo/:user/:repo", get(repo_info))
         .route("/repo_struct/:user_name/:repo_name", get(repo_info_struct))
-        .route("/subject", get(subject));
+        .route("/subject", get(subject))
+        .route("/subject_opt", get(subject_opt));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
