@@ -92,6 +92,16 @@ async fn app_error() -> Result<&'static str, AppError> {
     }
 }
 
+/// 思考题：中文响应
+async fn cn() -> (HeaderMap, &'static str) {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        HeaderName::from_static("content-type"),
+        HeaderValue::from_static("text/plain;charset=utf-8"),
+    );
+    (headers, "你好，axum.rs")
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -104,7 +114,8 @@ async fn main() {
         .route("/json", get(json))
         .route("/result", get(result))
         .route("/info_struct", get(info_struct))
-        .route("/app_error", get(app_error));
+        .route("/app_error", get(app_error))
+        .route("/cn", get(cn));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
