@@ -1,4 +1,8 @@
-use axum::{extract::Path, routing::get, Router};
+use axum::{
+    extract::{Path, Query},
+    routing::get,
+    Router,
+};
 use serde::Deserialize;
 
 /// 获取单个 Path 参数
@@ -28,12 +32,23 @@ async fn repo_info_struct(Path(info): Path<RepoInfo>) -> String {
     )
 }
 
+#[derive(Deserialize)]
+pub struct SubjectArgs {
+    pub page: i32,
+    pub keyword: String,
+}
+/// 将 Query 参数填充到结构体
+async fn subject(Query(args): Query<SubjectArgs>) -> String {
+    format!("Page {}, keyword: {} of subjects", args.page, args.keyword)
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
         .route("/user/:id", get(user_info))
         .route("/repo/:user/:repo", get(repo_info))
-        .route("/repo_struct/:user_name/:repo_name", get(repo_info_struct));
+        .route("/repo_struct/:user_name/:repo_name", get(repo_info_struct))
+        .route("/subject", get(subject));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
