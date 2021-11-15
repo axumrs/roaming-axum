@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use axum::{
     extract::{Form, Path, Query},
+    http::HeaderMap,
     routing::{get, post},
     Json, Router,
 };
@@ -94,6 +95,11 @@ async fn create_user_ajax(Json(frm): Json<CreateUser>) -> String {
     )
 }
 
+/// 获取所有请求头
+async fn get_all_headers(headers: HeaderMap) -> String {
+    format!("{:?}", headers)
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -105,7 +111,8 @@ async fn main() {
         .route("/subject_opt_done", get(subject_opt_done))
         .route("/all_query", get(all_query))
         .route("/create_user", post(create_user))
-        .route("/create_user_ajax", post(create_user_ajax));
+        .route("/create_user_ajax", post(create_user_ajax))
+        .route("/get_all_headers", get(get_all_headers));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
