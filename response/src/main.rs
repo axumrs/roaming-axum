@@ -1,5 +1,6 @@
 use axum::http::header::HeaderName;
 use axum::http::{HeaderMap, HeaderValue, StatusCode};
+use axum::response::Html;
 use axum::routing::get;
 use axum::Router;
 
@@ -38,6 +39,11 @@ async fn with_headers_and_status() -> (StatusCode, HeaderMap, &'static str) {
     (StatusCode::OK, headers, "axum.rs")
 }
 
+/// HTML 响应
+async fn html() -> Html<&'static str> {
+    Html("Hello, <em>axum.rs</em>!")
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -45,7 +51,8 @@ async fn main() {
         .route("/string", get(string_response))
         .route("/404", get(not_found))
         .route("/with_headers", get(with_headers))
-        .route("/with_headers_and_status", get(with_headers_and_status));
+        .route("/with_headers_and_status", get(with_headers_and_status))
+        .route("/html", get(html));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
