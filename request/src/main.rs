@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 
 use axum::{
-    extract::{Form, Path, Query},
+    extract::{Form, Path, Query, TypedHeader},
     http::HeaderMap,
     routing::{get, post},
     Json, Router,
 };
+use headers::UserAgent;
 use serde::Deserialize;
 
 /// 获取单个 Path 参数
@@ -100,6 +101,20 @@ async fn get_all_headers(headers: HeaderMap) -> String {
     format!("{:?}", headers)
 }
 
+/// 获取USER_AGENT
+async fn get_user_agent(headers: HeaderMap) -> String {
+    headers
+        .get(axum::http::header::USER_AGENT)
+        .and_then(|v| v.to_str().ok())
+        .map(|v| v.to_string())
+        .unwrap()
+}
+
+/// 已命名的Header
+async fn get_user_agent_typed(TypedHeader(user_agent): TypedHeader<UserAgent>) -> String {
+    user_agent.to_string()
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -112,7 +127,9 @@ async fn main() {
         .route("/all_query", get(all_query))
         .route("/create_user", post(create_user))
         .route("/create_user_ajax", post(create_user_ajax))
-        .route("/get_all_headers", get(get_all_headers));
+        .route("/get_all_headers", get(get_all_headers))
+        .route("/get_user_agent", get(get_user_agent))
+        .route("/get_user_agent_typed", get(get_user_agent_typed));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
