@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use axum::{
     extract::{Form, Path, Query},
     routing::{get, post},
-    Router,
+    Json, Router,
 };
 use serde::Deserialize;
 
@@ -86,6 +86,13 @@ async fn create_user(Form(frm): Form<CreateUser>) -> String {
     )
 }
 
+async fn create_user_ajax(Json(frm): Json<CreateUser>) -> String {
+    format!(
+        "Created user: {}, email: {}, level: {}",
+        frm.username, frm.email, frm.level
+    )
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -96,7 +103,8 @@ async fn main() {
         .route("/subject_opt", get(subject_opt))
         .route("/subject_opt_done", get(subject_opt_done))
         .route("/all_query", get(all_query))
-        .route("/create_user", post(create_user));
+        .route("/create_user", post(create_user))
+        .route("/create_user_ajax", post(create_user_ajax));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
