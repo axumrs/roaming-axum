@@ -3,7 +3,10 @@ use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::Html;
 use axum::routing::get;
 use axum::{Json, Router};
+use errors::AppError;
 use serde::Serialize;
+
+pub mod errors;
 
 /// 纯文本之 &str
 async fn str_response() -> &'static str {
@@ -77,6 +80,18 @@ async fn info_struct() -> Json<Info> {
     Json(info)
 }
 
+/// 响应自定义错误
+async fn app_error() -> Result<&'static str, AppError> {
+    let flag = false;
+    if flag {
+        Ok("Hello, axum.rs")
+    } else {
+        Err(AppError {
+            message: "Opps!".to_string(),
+        })
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -88,7 +103,8 @@ async fn main() {
         .route("/html", get(html))
         .route("/json", get(json))
         .route("/result", get(result))
-        .route("/info_struct", get(info_struct));
+        .route("/info_struct", get(info_struct))
+        .route("/app_error", get(app_error));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
