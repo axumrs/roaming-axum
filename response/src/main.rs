@@ -49,6 +49,16 @@ async fn json() -> Json<serde_json::Value> {
     Json(serde_json::json!({"axum.rs":"axum中文网"}))
 }
 
+/// Result 响应
+async fn result() -> Result<&'static str, StatusCode> {
+    let flag = false;
+    if flag {
+        Ok("Hello, axum.rs")
+    } else {
+        Err(StatusCode::INTERNAL_SERVER_ERROR)
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -58,7 +68,8 @@ async fn main() {
         .route("/with_headers", get(with_headers))
         .route("/with_headers_and_status", get(with_headers_and_status))
         .route("/html", get(html))
-        .route("/json", get(json));
+        .route("/json", get(json))
+        .route("/result", get(result));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
