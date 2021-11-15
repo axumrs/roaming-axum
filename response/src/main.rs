@@ -28,13 +28,24 @@ async fn with_headers() -> (HeaderMap, &'static str) {
     (headers, "axum.rs")
 }
 
+/// 带响应头和状态码的响应
+async fn with_headers_and_status() -> (StatusCode, HeaderMap, &'static str) {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        HeaderName::from_static("x-powered"),
+        HeaderValue::from_static("axum.rs"),
+    );
+    (StatusCode::OK, headers, "axum.rs")
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
         .route("/str", get(str_response))
         .route("/string", get(string_response))
         .route("/404", get(not_found))
-        .route("/with_headers", get(with_headers));
+        .route("/with_headers", get(with_headers))
+        .route("/with_headers_and_status", get(with_headers_and_status));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
