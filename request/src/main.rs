@@ -86,6 +86,7 @@ async fn create_user(Form(frm): Form<CreateUser>) -> String {
     )
 }
 
+/// 获取JSON输入
 async fn create_user_ajax(Json(frm): Json<CreateUser>) -> String {
     format!(
         "Created user: {}, email: {}, level: {}",
