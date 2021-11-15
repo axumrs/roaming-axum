@@ -2,7 +2,7 @@ use axum::http::header::HeaderName;
 use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::Html;
 use axum::routing::get;
-use axum::Router;
+use axum::{Json, Router};
 
 /// 纯文本之 &str
 async fn str_response() -> &'static str {
@@ -44,6 +44,11 @@ async fn html() -> Html<&'static str> {
     Html("Hello, <em>axum.rs</em>!")
 }
 
+/// JSON 响应
+async fn json() -> Json<serde_json::Value> {
+    Json(serde_json::json!({"axum.rs":"axum中文网"}))
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -52,7 +57,8 @@ async fn main() {
         .route("/404", get(not_found))
         .route("/with_headers", get(with_headers))
         .route("/with_headers_and_status", get(with_headers_and_status))
-        .route("/html", get(html));
+        .route("/html", get(html))
+        .route("/json", get(json));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
