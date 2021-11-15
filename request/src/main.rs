@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use axum::{
-    extract::{Path, Query},
-    routing::get,
+    extract::{Form, Path, Query},
+    routing::{get, post},
     Router,
 };
 use serde::Deserialize;
@@ -64,6 +66,26 @@ async fn subject_opt_done(Query(args): Query<SubjectArgsOpt>) -> String {
     format!("Page {}, keyword: {} of subjects", page, keyword)
 }
 
+/// 获取所有Query参数
+async fn all_query(Query(args): Query<HashMap<String, String>>) -> String {
+    format!("{:?}", args)
+}
+
+#[derive(Deserialize)]
+pub struct CreateUser {
+    pub username: String,
+    pub email: String,
+    pub level: u8,
+}
+
+/// 获取表单输入
+async fn create_user(Form(frm): Form<CreateUser>) -> String {
+    format!(
+        "Created user: {}, email: {}, level: {}",
+        frm.username, frm.email, frm.level
+    )
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -72,7 +94,9 @@ async fn main() {
         .route("/repo_struct/:user_name/:repo_name", get(repo_info_struct))
         .route("/subject", get(subject))
         .route("/subject_opt", get(subject_opt))
-        .route("/subject_opt_done", get(subject_opt_done));
+        .route("/subject_opt_done", get(subject_opt_done))
+        .route("/all_query", get(all_query))
+        .route("/create_user", post(create_user));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
