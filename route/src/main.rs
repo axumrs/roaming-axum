@@ -1,5 +1,6 @@
 use axum::{
     extract::{Form, Path},
+    http::{HeaderMap, StatusCode},
     response::Html,
     routing::get,
     Router,
@@ -88,24 +89,46 @@ async fn edit_user_action(Form(frm): Form<EditUser>) -> Html<String> {
     Html(html)
 }
 
+/// 新闻首页
+/// 访问路径：/news
 async fn news_index() -> &'static str {
     "new index"
 }
+
+/// 新闻详情
+/// 访问路径：/news/detail/123
 async fn news_detail(Path(id): Path<i32>) -> String {
     format!("new detail {}", id)
 }
+
+/// 新闻评论
+/// 访问路径：/news/comments/456
 async fn news_comments(Path(id): Path<i32>) -> String {
     format!("new comments {}", id)
 }
+
+/// 重定向
+async fn redirect() -> (StatusCode, HeaderMap, ()) {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        axum::http::header::LOCATION,
+        "https://axum.rs".parse().unwrap(),
+    );
+    (StatusCode::FOUND, headers, ())
+}
+
 #[tokio::main]
 async fn main() {
+    // 新闻的子路由
     let news_router = Router::new()
         .route("/", get(news_index))
         .route("/detail/:id", get(news_detail))
         .route("/comments/:id", get(news_comments));
+
     let app = Router::new()
-        .route("/edit_user/:id", get(edit_user).post(edit_user_action))
-        .nest("/news", news_router);
+        .route("/edit_user/:id", get(edit_user).post(edit_user_action)) // 链式路由
+        .nest("/news", news_router) // 新闻的嵌套路由
+        .route("/go", get(redirect)); // 重定向
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
