@@ -87,9 +87,25 @@ async fn edit_user_action(Form(frm): Form<EditUser>) -> Html<String> {
     );
     Html(html)
 }
+
+async fn news_index() -> &'static str {
+    "new index"
+}
+async fn news_detail(Path(id): Path<i32>) -> String {
+    format!("new detail {}", id)
+}
+async fn news_comments(Path(id): Path<i32>) -> String {
+    format!("new comments {}", id)
+}
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/edit_user/:id", get(edit_user).post(edit_user_action));
+    let news_router = Router::new()
+        .route("/", get(news_index))
+        .route("/detail/:id", get(news_detail))
+        .route("/comments/:id", get(news_comments));
+    let app = Router::new()
+        .route("/edit_user/:id", get(edit_user).post(edit_user_action))
+        .nest("/news", news_router);
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
