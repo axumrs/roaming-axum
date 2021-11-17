@@ -10,3 +10,5 @@
 - [在 axum 中获取请求数据](request)
 
 - [路由](route)
+
+- [axum 状态共享](state)
