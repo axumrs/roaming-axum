@@ -14,3 +14,5 @@
 - [axum 状态共享](state)
 
 - [中间件](middleware)
+
+- [axum 处理静态文件 ](static-files)
