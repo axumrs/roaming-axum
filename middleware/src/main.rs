@@ -1,5 +1,7 @@
-use axum::{routing::get, Router};
+use axum::{extract::extractor_middleware, routing::get, Router};
 use tower_http::trace::TraceLayer;
+
+pub mod user_agent;
 
 async fn foo() -> &'static str {
     "Welcome to axum.rs"
@@ -19,7 +21,8 @@ async fn main() {
     let app = Router::new()
         .route("/foo", get(foo))
         .route("/bar", get(bar))
-        .layer(TraceLayer::new_for_http());
+        .layer(TraceLayer::new_for_http())
+        .layer(extractor_middleware::<user_agent::UserAgentInfo>());
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
         .serve(app.into_make_service())
         .await
