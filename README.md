@@ -18,3 +18,5 @@
 - [axum 处理静态文件](static-files)
 
 - [axum 操作 redis](redis)
+
+- [axum 操作 Postgresql](postgres)
