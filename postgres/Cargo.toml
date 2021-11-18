@@ -1,0 +1,20 @@
+[package]
+name = "postgres"
+version = "0.1.0"
+edition = "2021"
+authors = ["axum.rs <team@axum.rs>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/axumrs/roaming-axum"
+homepage = "https://axum.rs"
+description = "axum.rs专题《漫游AXUM》"
+
+
+[dependencies]
+axum = "0.3"
+tokio = { version="1", features = ["full"] }
+deadpool-postgres = "0.9"
+tokio-postgres = "0.7"
+tokio-pg-mapper = "0.2"
+tokio-pg-mapper-derive = "0.2"
+serde={version="1", features=["derive"]}
