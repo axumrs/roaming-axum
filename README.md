@@ -20,3 +20,5 @@
 - [axum 操作 redis](redis)
 
 - [axum 操作 Postgresql](postgres)
+
+- [配置文件：让 axum app 可配置](config)
