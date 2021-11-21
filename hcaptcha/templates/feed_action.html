@@ -1,0 +1,13 @@
+{%extends "base.html"%}
+{%block title %}反馈详情{%endblock %}
+{%block content%}
+<dl>
+    <dt>昵称：</dt>
+    <dd>{{ feed.nickname }}</dd>
+    <dt>邮箱：</dt>
+    <dd>{{ feed.email }}</dd>
+    <dt>信息：</dt>
+    <dd>{{ feed.message }}</dd>
+</dl>
+<div><a href="/feed" class="btn btn-primary">返回</a></div>
+{%endblock%}

@@ -1,0 +1,39 @@
+{%extends "base.html"%}
+{%block title%}反馈{%endblock%}
+{%block content%}
+<form action="/feed" method="post" id="frmFeed">
+    <input type="hidden" name="hcaptcha_response" id="hcaptcha_response">
+    <div class="mb-3">
+        <label for="nickname" class="form-label">昵称：</label>
+        <input type="text" class="form-control" name="nickname" placeholder="你的昵称" required>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">邮箱：</label>
+        <input type="email" class="form-control" name="email" placeholder="你的邮箱" required>
+    </div>
+    <div class="mb-3">
+        <label for="message" class="form-label">信息：</label>
+        <textarea class="form-control" name="message" rows="3" required></textarea>
+    </div>
+    <div class="mb-3">
+        <div class="h-captcha" data-sitekey="{{ site_key }}"></div>
+    </div>
+    <button type="submit" class="btn btn-primary mb-3">提交</button>
+</form>
+{%endblock%}
+{%block js%}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+<script>
+    $(function(){
+        $('#frmFeed').submit(function(){
+            let res = $('[name=h-captcha-response]').val();
+            if (!res) {
+                alert('请进行人机验证');
+                return false;
+            }
+            $('#hcaptcha_response').val(res);
+        });
+    });
+</script>
+{%endblock%}

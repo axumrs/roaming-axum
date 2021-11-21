@@ -23,4 +23,8 @@
 
 - [配置文件：让 axum app 可配置](config)
 
+- [axum 实现 Session](session)
+
 - [axum 中使用模板引擎](template)
+
+- [ axum 集成 hcaptcha 验证码进行人机验证](hcaptcha)
