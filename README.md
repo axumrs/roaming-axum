@@ -27,4 +27,4 @@
 
 - [axum 中使用模板引擎](template)
 
-- [ axum 集成 hcaptcha 验证码进行人机验证](hcaptcha)
+- [axum 上传文件](upload-file)
