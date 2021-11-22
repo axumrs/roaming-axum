@@ -41,7 +41,10 @@ async fn upload_file_action(
         let data = file.bytes().await.unwrap(); // 上传的文件的内容
 
         // 保存上传的文件
-        std::fs::write(&filename, &data).map_err(|err| err.to_string())?;
+        //std::fs::write(&filename, &data).map_err(|err| err.to_string())?;
+        tokio::fs::write(&filename, &data)
+            .await
+            .map_err(|err| err.to_string())?;
 
         return cn(format!(
             "【上传的文件】文件名：{:?}, 文件大小：{}",
