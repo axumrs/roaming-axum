@@ -1,0 +1,5 @@
+.DS_Store
+.atom
+.vscode
+.idea
+*.vim
