@@ -11,5 +11,5 @@ description = "axum.rs专题《漫游AXUM》"
 
 
 [dependencies]
-axum = "0.3"
+axum = "0.6.15"
 tokio = { version="1", features = ["full"] }
