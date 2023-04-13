@@ -1,4 +1,4 @@
-use axum::{extract::Extension, routing, AddExtensionLayer, Router};
+use axum::{Extension, routing, Router};
 
 #[derive(Clone)]
 pub struct UserInfo {
@@ -11,7 +11,7 @@ async fn show_user_info(Extension(info): Extension<UserInfo>) -> String {
 async fn main() {
     let app = Router::new()
         .route("/user", routing::get(show_user_info))
-        .layer(AddExtensionLayer::new(UserInfo {
+        .layer(Extension(UserInfo {
             username: "axum.rs".to_string(),
         }));
     axum::Server::bind(&"127.0.0.1:9527".parse().unwrap())
